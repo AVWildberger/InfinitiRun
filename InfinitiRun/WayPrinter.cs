@@ -8,7 +8,16 @@ namespace InfinitiRun
 {
     public static class WayPrinter
     {
-        public enum Direction { Left, Right, Up, UpToLeft, UpToRight, LeftToUp, RightToUp }
+        public enum Direction 
+        { 
+            Left = 1, 
+            Right = 2, 
+            Up = 3, 
+            UpToLeft = 4, 
+            UpToRight = 5, 
+            LeftToUp = 6, 
+            RightToUp = 7 
+        }
 
         public static void SetCursor((int Width, int Height) pos) => Console.SetCursorPosition(pos.Width, pos.Height);
 
@@ -34,15 +43,18 @@ namespace InfinitiRun
             #region Left / Right
             else if (dir == Direction.Left || dir == Direction.Right)
             {
-                if (dir == Direction.Left) { pos.Width -= 1; }
+                bool single = false;
+                if (pos.Width == Console.WindowWidth - 1|| pos.Width == 0) { single = true; }
+
+                if (dir == Direction.Left && !single) { pos.Width -= 1; }
                 SetCursor(pos);
 
-                Console.Write("──");
+                Console.Write(!single ? "──" : "─");
 
                 pos.Height += 4;
                 SetCursor(pos);
 
-                Console.Write("──");
+                Console.Write(!single ? "──" : "─");
 
                 pos.Height -= 4;
             }
