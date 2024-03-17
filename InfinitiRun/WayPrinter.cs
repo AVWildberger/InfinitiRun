@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,11 +30,13 @@ namespace InfinitiRun
             if (dir == Direction.Up)
             {
                 Console.Write("│");
+                SetMap(pos);
 
                 pos.Width += 9;
                 SetCursor(pos);
 
                 Console.Write("│");
+                SetMap(pos);
 
                 pos.Height -= 1;
                 pos.Width -= 9;
@@ -50,11 +53,15 @@ namespace InfinitiRun
                 SetCursor(pos);
 
                 Console.Write(!single ? "──" : "─");
+                
+                if (single) { SetMap(pos); } else { SetMap(pos, true); }
 
                 pos.Height += 4;
                 SetCursor(pos);
 
                 Console.Write(!single ? "──" : "─");
+
+                if (single) { SetMap(pos); } else { SetMap(pos, true); }
 
                 pos.Height -= 4;
             }
@@ -64,17 +71,28 @@ namespace InfinitiRun
             else if (dir == Direction.UpToLeft)
             {
                 Console.Write("┐        │");
+                SetMap(pos);
+                SetMap((pos.Width + 9, pos.Height));
+
                 pos.Height -= 1;
                 SetCursor(pos);
 
                 for (int i = 0; i < 3; i++)
                 {
                     Console.Write("         │");
+
+                    SetMap((pos.Width + 9, pos.Height));
+
                     pos.Height -= 1;
                     SetCursor(pos);
                 }
 
                 Console.Write("─────────┐");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    SetMap((pos.Width + i, pos.Height));
+                }
 
                 pos.Width -= 1;
             }
@@ -84,17 +102,26 @@ namespace InfinitiRun
             else if (dir == Direction.UpToRight)
             {
                 Console.Write("│        ┌");
+                SetMap(pos);
+                SetMap((pos.Width + 9, pos.Height));
+
                 pos.Height -= 1;
                 SetCursor(pos);
 
                 for (int i = 0; i < 3; i++)
                 {
                     Console.Write("│         ");
+                    SetMap(pos);
                     pos.Height -= 1;
                     SetCursor(pos);
                 }
 
                 Console.Write("┌─────────");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    SetMap((pos.Width + i, pos.Height));
+                }
 
                 pos.Width += 10;
             }
@@ -107,17 +134,27 @@ namespace InfinitiRun
                 SetCursor(pos);
 
                 Console.Write("│        └");
+                SetMap(pos);
+                SetMap((pos.Width + 9, pos.Height));
+
                 pos.Height += 1;
                 SetCursor(pos);
 
                 for (int i = 0; i < 3; i++)
                 {
                     Console.Write("│         ");
+                    SetMap(pos);
+
                     pos.Height += 1;
                     SetCursor(pos);
                 }
 
                 Console.Write("└─────────");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    SetMap((pos.Width + i, pos.Height));
+                }
 
                 pos.Height -= 5;
             }
@@ -130,17 +167,26 @@ namespace InfinitiRun
                 SetCursor(pos);
 
                 Console.Write("─────────┘");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    SetMap((pos.Width + i, pos.Height));
+                }
+
                 pos.Height -= 1;
                 SetCursor(pos);
 
                 for (int i = 0; i < 3; i++)
                 {
                     Console.Write("         │");
+                    SetMap((pos.Width + 9, pos.Height));
                     pos.Height -= 1;
                     SetCursor(pos);
                 }
 
                 Console.Write("┘        │");
+                SetMap(pos);
+                SetMap((pos.Width + 9, pos.Height));
 
                 pos.Height -= 1;
             }
@@ -148,6 +194,27 @@ namespace InfinitiRun
 
             if (dir == Direction.Left) { pos.Width -= 1; }
             if (dir == Direction.Right) { pos.Width += 2; }
+        }
+
+        public static void EmptyMap()
+        {
+            for (int i = 0; i < Program.Map.GetLength(0); i++)
+            {
+                for (int k = 0; k < Program.Map.GetLength(1); k++)
+                {
+                    Program.Map[i, k] = false;
+                }
+            }
+        }
+
+        static void SetMap((int Width, int Height) pos, bool doubleWall = false)
+        {
+            Program.Map[pos.Width, pos.Height] = true;
+
+            if (doubleWall)
+            {
+                Program.Map[pos.Width + 1, pos.Height] = true;
+            }
         }
     }
 }

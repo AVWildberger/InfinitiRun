@@ -1,13 +1,19 @@
-﻿using System.Reflection.PortableExecutable;
+﻿using System.Data;
+using System.Reflection.PortableExecutable;
 using System.Transactions;
 
 namespace InfinitiRun
 {
     internal class Program
     {
+        static public bool[,] Map { get; set; } //true: blocked | false: free
+
         static void Main()
         {
             Settings.Setup();
+
+            Map = new bool[Console.WindowWidth, Console.WindowHeight];
+            WayPrinter.EmptyMap();
 
             (int Width, int Height) position = (Console.WindowWidth / 2 - 5, Console.WindowHeight - 1);
             WayPrinter.Direction lastPosition = WayPrinter.Direction.Up;
@@ -17,12 +23,29 @@ namespace InfinitiRun
                 WayPrinter.DrawLines(WayPrinter.Direction.Up, ref position);
             }
 
-            while (true)
+            while (position.Height != -1 && position.Width != -1 && position.Width != Console.WindowWidth + 1)
             {
                 GenerateWay(ref position, ref lastPosition);
-
-                ConsoleKey key = Console.ReadKey(true).Key;
             }
+
+            Player player = new Player();
+
+            Console.SetCursorPosition(0, Console.WindowHeight);
+            for (int i = 0; i < Map.GetLength(0); i++)
+            {
+                for (int k = 0; k < Map.GetLength(1); k++)
+                {
+                    Console.SetCursorPosition(i, Console.WindowHeight + k);
+                    Console.Write(Map[i, k] ? "X" : " ");
+                }
+            }
+
+            while (true)
+            {
+                ConsoleKey key = Console.ReadKey(true).Key;
+                player.Move(key);
+            }
+
         }
 
         static void GenerateWay(ref (int Width, int Height) pos, ref WayPrinter.Direction lastDirection)
